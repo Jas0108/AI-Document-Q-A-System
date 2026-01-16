@@ -1,6 +1,6 @@
 # AI Document Q&A System
 
-🔗 **Live Demo:** [https://ai-document-q-a-system.streamlit.app/](https://ai-document-q-a-system.streamlit.app/)
+🔗 **Demo:** [https://ai-document-q-a-system.streamlit.app/](https://ai-document-q-a-system.streamlit.app/)
 
 A production-ready RAG (Retrieval-Augmented Generation) application that enables intelligent question-answering over PDF documents. Users can upload any PDF document and engage in natural language conversations to extract insights, ask follow-up questions, and receive contextually accurate answers with source citations.
 
@@ -15,7 +15,6 @@ This application implements a dynamic RAG system that processes PDF documents, c
 - **Semantic Search**: Vector-based retrieval using FAISS for finding relevant document sections
 - **Natural Language Understanding**: Handles follow-up questions and conversational context
 - **Adaptive Responses**: Provides concise answers for simple questions and detailed explanations for complex queries
-- **Source Citations**: Transparent source attribution with document metadata
 - **Conversation Memory**: Maintains context across multiple questions in a session
 - **Modern UI**: Clean, user-friendly Streamlit interface with real-time processing feedback
 
@@ -36,7 +35,6 @@ The system follows a RAG (Retrieval-Augmented Generation) architecture with the 
 ### 3. Retrieval Chain
 - **Query Embedding**: Converts user questions into embeddings using the same model
 - **Similarity Search**: Finds the 5 most relevant document chunks using cosine similarity
-- **Context Filtering**: Applies keyword-based relevance filtering to ensure retrieved documents are contextually appropriate
 - **Follow-up Detection**: Intelligently detects follow-up questions and uses previous conversation context for better retrieval
 
 ### 4. Generation Chain
@@ -94,6 +92,4 @@ The system follows a RAG (Retrieval-Augmented Generation) architecture with the 
 - **User Experience**: Real-time feedback during processing, clear error messages, and intuitive UI
 - **Privacy-First**: Documents are processed in-memory with optional local persistence
 
-## License
 
-MIT
