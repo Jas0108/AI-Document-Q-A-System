@@ -1,0 +1,23 @@
+[server]
+# Increase timeout to prevent connection errors
+runOnSave = true
+headless = true
+
+[client]
+# Show error details
+showErrorDetails = true
+
+[browser]
+# Hide deploy button and gather usage stats
+gatherUsageStats = false
+
+[runner]
+# Increase timeout for long-running operations
+fastReruns = false
+
+[theme]
+primaryColor = "#FF4B4B"
+backgroundColor = "#0E1117"
+secondaryBackgroundColor = "#262730"
+textColor = "#FAFAFA"
+font = "sans serif"
