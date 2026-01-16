@@ -1,169 +1,98 @@
-# Document Q&A System
+# AI Document Q&A System
 
-A production-ready RAG (Retrieval-Augmented Generation) application for question-answering over documents.
+🔗 **Live Demo:** [https://ai-document-q-a-system.streamlit.app/](https://ai-document-q-a-system.streamlit.app/)
+
+A production-ready RAG (Retrieval-Augmented Generation) application that enables intelligent question-answering over PDF documents. Users can upload any PDF document and engage in natural language conversations to extract insights, ask follow-up questions, and receive contextually accurate answers with source citations.
+
+## Overview
+
+This application implements a dynamic RAG system that processes PDF documents, creates semantic embeddings, and uses advanced language models to answer questions based on document content. The system understands natural language, handles follow-up questions intelligently, and provides detailed source citations for transparency.
 
 ## Features
 
-- 📄 PDF document processing
-- 🔍 Semantic search using vector embeddings
-- 💬 AI-powered Q&A using Groq LLM
-- 💾 Persistent vector store
-- 📊 Source citations with metadata
-- 🎨 Modern, user-friendly interface
+- **Dynamic PDF Upload**: Upload any PDF document through an intuitive web interface
+- **Intelligent Document Processing**: Automatic text extraction, chunking, and embedding generation
+- **Semantic Search**: Vector-based retrieval using FAISS for finding relevant document sections
+- **Natural Language Understanding**: Handles follow-up questions and conversational context
+- **Adaptive Responses**: Provides concise answers for simple questions and detailed explanations for complex queries
+- **Source Citations**: Transparent source attribution with document metadata
+- **Conversation Memory**: Maintains context across multiple questions in a session
+- **Modern UI**: Clean, user-friendly Streamlit interface with real-time processing feedback
 
-## Setup
+## Architecture
 
-### Prerequisites
+The system follows a RAG (Retrieval-Augmented Generation) architecture with the following components:
 
-- Python 3.9 or higher
-- Groq API key ([Get one here](https://console.groq.com))
-- **Optional**: Google Generative AI API key (only needed if using Google embeddings)
+### 1. Document Processing Pipeline
+- **PDF Loading**: Extracts text from uploaded PDF documents using PyPDFLoader
+- **Text Chunking**: Splits documents into semantically meaningful chunks (1000 characters with 200 character overlap) using RecursiveCharacterTextSplitter
+- **Embedding Generation**: Converts text chunks into high-dimensional vector embeddings using HuggingFace sentence transformers
 
-### Installation Steps
+### 2. Vector Store
+- **FAISS Index**: Stores document embeddings in a FAISS vector database for efficient similarity search
+- **Persistent Storage**: Vector store is saved locally to avoid re-processing documents
+- **Semantic Retrieval**: Retrieves top-k most relevant document chunks based on query similarity
 
-1. **Clone or navigate to the project directory**
-   ```bash
-   cd Gemma
-   ```
+### 3. Retrieval Chain
+- **Query Embedding**: Converts user questions into embeddings using the same model
+- **Similarity Search**: Finds the 5 most relevant document chunks using cosine similarity
+- **Context Filtering**: Applies keyword-based relevance filtering to ensure retrieved documents are contextually appropriate
+- **Follow-up Detection**: Intelligently detects follow-up questions and uses previous conversation context for better retrieval
 
-2. **Create virtual environment**
-   ```bash
-   python -m venv venv
-   ```
+### 4. Generation Chain
+- **Prompt Engineering**: Uses context-aware prompts that adapt based on question type (simple vs. complex)
+- **LLM Integration**: Leverages Groq's Llama 3.1 8B Instant model for fast, accurate responses
+- **Context Injection**: Passes retrieved document chunks as context to the LLM
+- **Answer Synthesis**: Generates answers strictly based on provided context, with fallback messages when information is unavailable
 
-3. **Activate virtual environment**
-   
-   On Windows:
-   ```powershell
-   .\venv\Scripts\Activate.ps1
-   ```
-   
-   On macOS/Linux:
-   ```bash
-   source venv/bin/activate
-   ```
-
-4. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. **Configure environment variables**
-   - Copy `.env.example` to `.env`:
-     ```bash
-     copy .env.example .env
-     ```
-   - Edit `.env` and add your API keys:
-     ```
-     GROQ_API_KEY=your_actual_groq_key_here
-     EMBEDDING_PROVIDER=huggingface  # Use "huggingface" (free) or "google" (requires API key)
-     ```
-   - **Note**: The app uses **free HuggingFace embeddings by default** (no API key needed). 
-     If you want to use Google embeddings, set `EMBEDDING_PROVIDER=google` and add `GOOGLE_API_KEY`.
-
-6. **Add documents (if needed)**
-   - Place PDF files in the `us_census/` directory
-   - Or update `DOCUMENTS_PATH` in `app.py` to point to your documents
-
-## Running the Application
-
-1. **Make sure virtual environment is activated**
-   
-   On Windows:
-   ```powershell
-   .\venv\Scripts\Activate.ps1
-   ```
-   
-   On macOS/Linux:
-   ```bash
-   source venv/bin/activate
-   ```
-
-2. **Run Streamlit**
-   ```bash
-   streamlit run app.py
-   ```
-
-3. **Open in browser**
-   - The app will automatically open at `http://localhost:8501`
-   - If it doesn't, manually navigate to that URL
-
-## Usage
-
-1. **Upload PDFs**: Use the file uploader to upload one or more PDF documents
-2. **Process Documents**: Click "Process Documents" to create embeddings from your PDFs
-3. **Ask Questions**: Type your question in the chat input at the bottom
-4. **View Sources**: Expand "Source Documents" to see where the answer came from
-5. **Follow-up Questions**: Ask natural follow-up questions - the system understands context
-
-## Project Structure
-
-```
-Gemma/
-├── app.py                 # Main application file
-├── requirements.txt       # Python dependencies
-├── .env                   # Environment variables (create from .env.example)
-├── .env.example           # Example environment file
-├── .gitignore            # Git ignore rules
-├── README.md             # This file
-├── us_census/            # PDF documents directory
-└── storage/              # Vector store persistence (auto-created)
-    └── vector_store/      # Saved embeddings
-```
+### 5. Conversation Management
+- **Session State**: Maintains conversation history using Streamlit's session state
+- **Follow-up Handling**: Detects follow-up questions using natural language patterns and conversation history
+- **Context Preservation**: Passes previous questions and answers to maintain conversational flow
 
 ## Technology Stack
 
-- **Streamlit** - Web interface
-- **LangChain** - RAG framework
-- **Groq** - LLM inference (Llama 3.1 8B Instant)
-- **Embeddings**:
-  - **HuggingFace** (default) - Free embeddings using sentence-transformers or Inference API
-  - **Google Generative AI** (optional) - Cloud-based embeddings (requires API key)
-- **FAISS** - Vector database
+### Frontend & Framework
+- **Streamlit**: Web application framework for building the interactive UI
+- **Python 3.9+**: Core programming language
 
-## Troubleshooting
+### RAG & LLM Framework
+- **LangChain**: Orchestration framework for RAG pipeline
+- **LangChain Community**: Community integrations for document loaders and vector stores
+- **Groq**: High-performance LLM inference using Llama 3.1 8B Instant model
 
-### Import Errors
-- Make sure virtual environment is activated
-- Run `pip install -r requirements.txt` again
-- Check Python version: `python --version` (should be 3.9+)
+### Embeddings & Vector Search
+- **HuggingFace**: 
+  - `sentence-transformers/all-MiniLM-L6-v2` for generating embeddings
+  - HuggingFace Inference API for cloud-based embeddings (with local fallback)
+- **FAISS**: Facebook AI Similarity Search for efficient vector similarity operations
 
-### API Key Errors
-- Verify `.env` file exists and contains `GROQ_API_KEY`
-- For Google embeddings: Check `GOOGLE_API_KEY` is set if using `EMBEDDING_PROVIDER=google`
-- **Tip**: Use `EMBEDDING_PROVIDER=huggingface` for free embeddings (no Google API key needed)
+### Document Processing
+- **PyPDF**: PDF text extraction and processing
+- **RecursiveCharacterTextSplitter**: Intelligent text chunking with overlap
 
-### Quota/429 Errors (Google Embeddings)
-- If you see "quota exceeded" errors, the app will automatically switch to free HuggingFace embeddings
-- To use HuggingFace by default, set `EMBEDDING_PROVIDER=huggingface` in your `.env` file
+### Utilities
+- **python-dotenv**: Environment variable management
+- **Logging**: Comprehensive logging for debugging and monitoring
 
-### Document Loading Errors
-- Ensure `us_census/` directory exists
-- Verify PDF files are in the directory
-- Check file permissions
+## How It Works
 
-### Vector Store Issues
-- Delete `storage/` folder to force re-processing
-- Check disk space availability
+1. **Document Upload**: User uploads one or more PDF files through the web interface
+2. **Processing**: System extracts text, splits into chunks, and generates embeddings
+3. **Indexing**: Embeddings are stored in a FAISS vector database
+4. **Query**: User asks a question in natural language
+5. **Retrieval**: System finds the most relevant document chunks using semantic search
+6. **Generation**: LLM synthesizes an answer from retrieved context
+7. **Response**: Answer is displayed with source citations and metadata
+8. **Follow-up**: System maintains conversation context for natural follow-up questions
 
-## Deployment
+## Key Design Decisions
 
-### Streamlit Cloud (Recommended)
-
-Deploy your app to Streamlit Cloud for free! See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed step-by-step instructions.
-
-**Quick Steps:**
-1. Push your code to GitHub (make repository public)
-2. Sign up at [share.streamlit.io](https://share.streamlit.io)
-3. Connect your GitHub repository
-4. Add API keys in Streamlit Cloud Secrets:
-   - `GROQ_API_KEY`
-   - `HUGGINGFACE_API_KEY` (optional)
-5. Deploy!
-
-Your app will be live at: `https://your-app-name.streamlit.app`
-
-For detailed instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+- **Adaptive Answer Depth**: Prompt templates adjust response style based on question complexity
+- **Robust Error Handling**: Graceful fallbacks for API failures and missing information
+- **Efficient Caching**: LLM and retriever objects are cached to improve performance
+- **User Experience**: Real-time feedback during processing, clear error messages, and intuitive UI
+- **Privacy-First**: Documents are processed in-memory with optional local persistence
 
 ## License
 
